@@ -6,7 +6,7 @@ edition = "2024"
 license = "MIT"
 description = "Oscillators and a collection of waveforms for real-time usage."
 repository = "https://github.com/sigurd4/oscillation"
-keywords = ["oscillators", "vst", "real-time", "waveforms", "synthesizers"]
+keywords = ["wavetable", "vst", "real-time", "waveforms", "synthesizers"]
 categories = ["algorithms", "mathematics", "multimedia::audio", "no-std::no-alloc"]
 exclude = ["plots/"]
 

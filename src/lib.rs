@@ -30,21 +30,25 @@ where
 #[cfg(test)]
 mod tests
 {
-    use core::{error::Error, f32::consts::{FRAC_PI_2, TAU}, ops::RangeInclusive};
+    use core::{
+        error::Error,
+        f32::consts::{FRAC_PI_2, TAU},
+        ops::RangeInclusive
+    };
 
     use linspace::{Linspace, LinspaceArray};
 
-    use crate::{oscillator::{Direct, Oscillator}, waveform::Waveform};
+    use crate::{
+        oscillator::{Direct, Oscillator},
+        waveform::Waveform
+    };
 
     use super::*;
 
     const PLOT_TARGET: &str = "plots";
 
     #[test]
-    fn it_works()
-    {
-        
-    }
+    fn it_works() {}
 
     fn name(type_name: &str) -> (&str, String)
     {
@@ -73,7 +77,8 @@ mod tests
             }
         };
         let mut first = true;
-        let file_name: String = name.chars()
+        let file_name: String = name
+            .chars()
             .flat_map(|c| {
                 if c.is_ascii_uppercase()
                 {
@@ -103,10 +108,10 @@ mod tests
         const N: usize = 128;
         const M: usize = 32;
         const MM: usize = M + 1;
-        const MC: usize = MM/2;
+        const MC: usize = MM / 2;
         const MORE: f32 = FRAC_PI_2;
         const RANGE: RangeInclusive<f32> = -MORE..=(TAU + MORE);
-        const RATE: f32 = N as f32*TAU/(*RANGE.end() - *RANGE.start());
+        const RATE: f32 = N as f32 * TAU / (*RANGE.end() - *RANGE.start());
         const L: usize = 1024;
         const TIME: f32 = 1.0;
 
