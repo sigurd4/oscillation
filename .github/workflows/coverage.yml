@@ -18,7 +18,7 @@ jobs:
     - uses: "actions/checkout@v3"
       name: "Checkout"
     - name: Install packages
-      run: apt install libfontconfig1-dev && apt-get install libgsl-dev
+      run: apt install libfontconfig1-dev && apt-get install gsl-bin libgsl0-dev
     - uses: "actions-rs/toolchain@v1"
       with:
         profile: "minimal"
