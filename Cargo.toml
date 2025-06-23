@@ -11,7 +11,7 @@ categories = ["algorithms", "mathematics", "multimedia::audio", "no-std::no-allo
 exclude = ["plots/"]
 
 [dependencies]
-moddef = "0.2.6"
+moddef = "0.3.0"
 rand = "0.9.1"
 num-traits = "0.2.19"
 num-complex = "0.4.6"
