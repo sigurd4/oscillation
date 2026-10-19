@@ -1,3 +1,4 @@
+use num_complex::{Complex, ComplexFloat};
 use num_traits::{Euclid, Float, FloatConst};
 
 use crate::{Wavetable, util};
@@ -74,10 +75,9 @@ where
 
         {
             let x = (-p * s).to_f64().unwrap().clamp(-MAX_I_N, MAX_I_N);
-            i_n.i0 = real_bessel::j0(x);
-            for (n, i_n) in i_n.i_n.iter_mut().enumerate().take(MAX_N)
+            for (n, i_n) in core::iter::once(&mut i_n.i0).chain(i_n.i_n.iter_mut()).enumerate().take(MAX_N)
             {
-                *i_n = real_bessel::jn(n as i32 + 1, x)
+                *i_n = complex_bessel::besseli(n as f64, Complex::from(x)).expect("Bessel function didn't converge").re()
             }
         }
 
