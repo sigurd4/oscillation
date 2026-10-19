@@ -11,13 +11,13 @@ categories = ["algorithms", "mathematics", "multimedia::audio", "no-std::no-allo
 exclude = ["plots/"]
 
 [dependencies]
-moddef = "0.2.6"
-rand = "0.9.1"
+moddef = "0.3.0"
+rand = "0.10.3"
 num-traits = "0.2.19"
 num-complex = "0.4.6"
-serde = {version = "1.0.219", features = ["derive"]}
+serde = {version = "1.0.229", features = ["derive"]}
 real-bessel = { version = "1.0.1", default-features = false }
 
 [dev-dependencies]
 plotters = "0.3.7"
-linspace = "0.1.1"
+linspace = "0.3.0"
