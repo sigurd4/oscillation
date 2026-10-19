@@ -12,10 +12,10 @@ exclude = ["plots/"]
 
 [dependencies]
 moddef = "0.3.0"
-rand = "0.10.3"
-num-traits = "0.2.19"
+rand = {version = "0.10.3", default-features = false}
+num-traits = {version = "0.2.19", default-features = false}
 num-complex = "0.4.6"
-serde = {version = "1.0.229", features = ["derive"]}
+serde = {version = "1.0.229", default-features = false, features = ["derive"]}
 complex-bessel = { version = "0.3.0", default-features = false }
 
 [dev-dependencies]
