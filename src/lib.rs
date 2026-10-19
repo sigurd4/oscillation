@@ -36,7 +36,7 @@ mod tests
         ops::RangeInclusive
     };
 
-    use linspace::{Linspace, LinspaceArray};
+    use linspace::Linspace;
 
     use crate::{
         oscillator::{Direct, Oscillator},
@@ -118,7 +118,7 @@ mod tests
         const OMEGA: f32 = TAU;
         const PHI: f32 = *RANGE.start();
 
-        let theta = RANGE.linspace(N);
+        let theta = RANGE.linspace(N).collect::<Vec<_>>();
 
         let dtc: [_; M] = (0.0..=1.0).linspace_array();
 
