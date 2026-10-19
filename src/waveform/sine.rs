@@ -12,12 +12,12 @@ impl<F> Waveform<F> for Sine
 where
     F: Float + FloatConst + Euclid
 {
-    fn waveform(&self, theta: F) -> F
+    fn waveform(&mut self, theta: F) -> F
     {
         theta.cos()
     }
 
-    fn waveform_with_dtc(&self, theta: F, duty_cycle: F) -> F
+    fn waveform_with_dtc(&mut self, theta: F, duty_cycle: F) -> F
     {
         let half = crate::duty_cycle_default::<F>();
 

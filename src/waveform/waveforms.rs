@@ -47,14 +47,14 @@ macro_rules! waveforms {
             F: Float,
             $($w: oscillation::waveform::Waveform<F>),+
         {
-            fn waveform(&self, theta: F) -> F
+            fn waveform(&mut self, theta: F) -> F
             {
                 match self
                 {
                     $(Self::$w => $w.waveform(theta)),+
                 }
             }
-            fn waveform_with_dtc(&self, theta: F, duty_cycle: F) -> F
+            fn waveform_with_dtc(&mut self, theta: F, duty_cycle: F) -> F
             {
                 match self
                 {
@@ -148,14 +148,14 @@ macro_rules! waveforms {
             F: Float,
             $($w: oscillation::waveform::Waveform<F>),+
         {
-            fn waveform(&self, theta: F) -> F
+            fn waveform(&mut self, theta: F) -> F
             {
                 match self
                 {
                     $(Self::$w(w) => w.waveform(theta)),+
                 }
             }
-            fn waveform_with_dtc(&self, theta: F, duty_cycle: F) -> F
+            fn waveform_with_dtc(&mut self, theta: F, duty_cycle: F) -> F
             {
                 match self
                 {
@@ -190,29 +190,123 @@ macro_rules! waveforms {
             oscillation::waveforms!($($more)*);
         )?
     };
+    (
+        $(#[$meta:meta])*
+        $v:vis enum $group:ident<$r:ident> $(= $default:ident)?
+        {
+            $($w:ident$(<$rr:ident>)?),+$(,)?
+        }
+        $($($more:tt)+)?
+    ) => {
+        $(#[$meta])*
+        #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, serde::Serialize, serde::Deserialize)]
+        $v enum $group<$r>
+        where
+            $r: rand::Rng
+        {
+            $($w($w$(<$rr>)?)),+
+        }
+
+        $(
+            impl<$r> From<$w$(<$rr>)?> for $group<$r>
+            where
+                $r: rand::Rng
+            {
+                fn from(value: $w$(<$rr>)?) -> Self
+                {
+                    Self::$w(value)
+                }
+            }
+        )*
+
+        $(
+            impl<$r> Default for $group<$r>
+            where
+                $r: rand::Rng
+            {
+                fn default() -> Self
+                {
+                    <$default as Default>::default().into()
+                }
+            }
+        )?
+
+        impl<F, $r> oscillation::waveform::Waveform<F> for $group<$r>
+        where
+            F: Float,
+            $r: rand::Rng,
+            $($w$(<$rr>)?: oscillation::waveform::Waveform<F>),+
+        {
+            fn waveform(&mut self, theta: F) -> F
+            {
+                match self
+                {
+                    $(Self::$w(w) => w.waveform(theta)),+
+                }
+            }
+            fn waveform_with_dtc(&mut self, theta: F, duty_cycle: F) -> F
+            {
+                match self
+                {
+                    $(Self::$w(w) => w.waveform_with_dtc(theta, duty_cycle)),+
+                }
+            }
+
+            fn wavetable<const N: usize>(&self) -> Option<Wavetable<F, N>>
+            {
+                match self
+                {
+                    $(Self::$w(w) => w.wavetable()),+
+                }
+            }
+
+            fn wavetable_with_dtc<const N: usize>(&self, duty_cycle: F) -> Option<Wavetable<F, N>>
+            {
+                match self
+                {
+                    $(Self::$w(w) => w.wavetable_with_dtc(duty_cycle)),+
+                }
+            }
+        }
+
+        impl<$r> $group<$r>
+        where
+            $r: rand::Rng
+        {
+            #[allow(unused)]
+            pub const VARIANT_COUNT: usize = core::mem::variant_count::<Self>();
+        }
+
+        $(
+            oscillation::waveforms!($($more)*);
+        )?
+    };
 }
 
 waveforms!(
-    pub enum MekkaWaveform: u8 = Sine
+    pub enum MekkaWaveform<R> = Sine
     {
         Sine,
         Triangle,
         Sawtooth,
         Square,
-        Noise
+        Noise<R>
     }
 );
 
+#[cfg(feature = "sys")]
 #[cfg(test)]
 mod test
 {
     use core::error::Error;
 
-    use super::MekkaWaveform;
+    use crate::waveform::Triangle;
+
+use super::MekkaWaveform;
 
     #[test]
     fn it_works() -> Result<(), Box<dyn Error>>
     {
-        crate::tests::print_waveform(MekkaWaveform::Triangle)
+        crate::tests::print_waveform(MekkaWaveform::<rand::rngs::ThreadRng>::Triangle(Triangle))
     }
 }

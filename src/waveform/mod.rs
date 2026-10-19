@@ -18,8 +18,8 @@ pub trait Waveform<F>: Sized
 where
     F: Float
 {
-    fn waveform(&self, theta: F) -> F;
-    fn waveform_with_dtc(&self, theta: F, duty_cycle: F) -> F
+    fn waveform(&mut self, theta: F) -> F;
+    fn waveform_with_dtc(&mut self, theta: F, duty_cycle: F) -> F
     {
         let _ = duty_cycle;
         self.waveform(theta)

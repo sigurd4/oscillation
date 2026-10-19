@@ -1,6 +1,5 @@
 #![cfg_attr(not(test), no_std)]
 #![feature(variant_count)]
-#![feature(float_gamma)]
 #![feature(iter_array_chunks)]
 #![feature(specialization)]
 
@@ -103,7 +102,7 @@ mod tests
 
     pub(crate) fn print_waveform<W>(waveform: W) -> Result<(), Box<dyn Error>>
     where
-        W: Waveform<f32> + Copy
+        W: Waveform<f32> + Clone
     {
         const N: usize = 128;
         const M: usize = 32;
@@ -128,8 +127,8 @@ mod tests
         };
 
         let y = core::array::from_fn::<_, MM, _>(|i| {
-            let mut osc1 = Oscillator::new(OMEGA, PHI, Direct::from(waveform));
-            let mut osc2 = osc1.with_wavetable::<L>();
+            let mut osc1 = Oscillator::new(OMEGA, PHI, Direct::from(waveform.clone()));
+            let mut osc2 = osc1.clone().with_wavetable::<L>();
 
             if i == MC
             {

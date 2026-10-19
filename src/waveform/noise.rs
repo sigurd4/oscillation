@@ -1,27 +1,45 @@
 use num_traits::Float;
-use rand::distr::{uniform::SampleUniform, Distribution, Uniform};
+use rand::{
+    Rng,
+    distr::{Distribution, Uniform, uniform::SampleUniform}
+};
 
 use super::Waveform;
 
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, PartialOrd, Ord, serde::Serialize, serde::Deserialize)]
-pub struct Noise;
-
-impl<F> Waveform<F> for Noise
+pub struct Noise<R>(pub R)
 where
-    F: Float + SampleUniform
+    R: Rng;
+
+impl<R> From<R> for Noise<R>
+where
+    R: Rng
 {
-    fn waveform(&self, _theta: F) -> F
+    fn from(value: R) -> Self
+    {
+        Self(value)
+    }
+}
+
+impl<F, R> Waveform<F> for Noise<R>
+where
+    F: Float + SampleUniform,
+    R: Rng
+{
+    fn waveform(&mut self, _theta: F) -> F
     {
         let one = F::one();
-        Uniform::new_inclusive(-one, one).unwrap().sample(&mut rand::rng())
+        Uniform::new_inclusive(-one, one).unwrap().sample(&mut self.0)
     }
-    fn waveform_with_dtc(&self, theta: F, duty_cycle: F) -> F
+
+    fn waveform_with_dtc(&mut self, theta: F, duty_cycle: F) -> F
     {
         let y = self.waveform(theta);
         y.abs().powf(duty_cycle + duty_cycle).copysign(y)
     }
 }
 
+#[cfg(feature = "sys")]
 #[cfg(test)]
 mod test
 {
@@ -32,6 +50,6 @@ mod test
     #[test]
     fn it_works() -> Result<(), Box<dyn Error>>
     {
-        crate::tests::print_waveform(Noise)
+        crate::tests::print_waveform(Noise(rand::rng()))
     }
 }
