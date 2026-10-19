@@ -16,7 +16,7 @@ rand = "0.9.1"
 num-traits = "0.2.19"
 num-complex = "0.4.6"
 serde = {version = "1.0.219", features = ["derive"]}
-GSL = "7.0.0"
+real-bessel = { version = "1.0.1", default-features = false }
 
 [dev-dependencies]
 plotters = "0.3.7"

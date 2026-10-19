@@ -1,6 +1,6 @@
 #![cfg_attr(not(test), no_std)]
 #![feature(variant_count)]
-#![feature(let_chains)]
+#![feature(float_gamma)]
 #![feature(iter_array_chunks)]
 #![feature(specialization)]
 

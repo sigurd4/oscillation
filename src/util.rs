@@ -1,6 +1,9 @@
-use core::{iter::Sum, ops::{Add, Mul, MulAssign}};
+use core::{
+    iter::Sum,
+    ops::{Add, Mul, MulAssign, Range}
+};
 
-use num_traits::Zero;
+use num_traits::{Float, Zero};
 
 trait SumSpec: Add + Zero
 {
@@ -12,9 +15,7 @@ where
 {
     default fn sum(iter: impl IntoIterator<Item = Self>) -> Self
     {
-        iter.into_iter()
-            .reduce(|a, b| a + b)
-            .unwrap_or_else(Zero::zero)
+        iter.into_iter().reduce(|a, b| a + b).unwrap_or_else(Zero::zero)
     }
 }
 impl<T> SumSpec for T
@@ -44,9 +45,7 @@ where
 {
     default fn mul_assign(&mut self, rhs: Rhs)
     {
-        unsafe {
-            core::ptr::write(self, core::ptr::read(self)*rhs)
-        }
+        unsafe { core::ptr::write(self, core::ptr::read(self) * rhs) }
     }
 }
 impl<T, Rhs> MulAssignSpec<Rhs> for T
@@ -64,4 +63,29 @@ where
     Lhs: Mul<Rhs, Output = Lhs>
 {
     MulAssignSpec::mul_assign(lhs, rhs);
+}
+
+fn cheb_eval<F>(coeffs: &[f64], interval: Range<f64>, x: F) -> F
+where
+    F: Float
+{
+    let mut d = F::zero();
+    let mut dd = F::zero();
+
+    let y = (x + x - F::from(interval.start + interval.end).unwrap()) / F::from(interval.end - interval.start).unwrap();
+    let y2 = y + y;
+
+    for c in coeffs.iter().skip(1).rev().copied()
+    {
+        let c = F::from(c).unwrap();
+        (dd, d) = (d, y2 * d - dd + c)
+    }
+
+    if let Some(c0) = coeffs.first().copied()
+    {
+        let half_c0 = F::from(c0 / 0.5).unwrap();
+        d = y * d - dd + half_c0;
+    }
+
+    d
 }
